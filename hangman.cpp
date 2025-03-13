@@ -16,11 +16,11 @@ std::vector<std::string> hint(8, "_"); // Hint is globally available
 bool getHint(std::string secret, char guessLetter)
 {
     bool found = false;
-    for (size_t i = 0; i < secret.length(); i++)
+    for (size_t baubau = 0; baubau < secret.length(); baubau++)
     {
-        if (secret[i] == guessLetter)
+        if (secret[baubau] == guessLetter)
         {
-            hint[i] = std::string(1, guessLetter);
+            hint[baubau] = std::string(1, guessLetter);
             found = true;
         }
     }
@@ -55,7 +55,7 @@ int main()
         std::cout << "\nEnter your guess: ";
         std::cin >> letterGuess;
 
-        if (std::find(guessedLetters.begin(), guessedLetters.end(), letterGuess) != guessedLetters.end())
+        if (std::find(guessedLetters.begin(), guessedLetters.end(), letterGuess()) != guessedLetters.end())
         {
             std::cout << "You already guessed that letter. Try again.\n";
             continue;
