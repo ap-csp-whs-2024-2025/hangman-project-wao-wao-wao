@@ -11,76 +11,91 @@
 #include <string>    // std::string, std::getline
 #include <vector>    // std::vector
 
-std::vector<std::string> hint = std::vector<std::string>(8, "_");    // Note that hint is globally available; we want it to be like this for this project
+std::vector<std::string> hint(8, "_"); // Hint is globally available
 
 bool getHint(std::string secret, char guessLetter)
 {
-    // TODO: Write code that updates the hint based on the secret
-    // and based on the guess letter.  Use the hint from above.
-
-    // The procedure should return true if the letter was in the word,
-    // and return false if the letter was not in the word.
-    return false;
+    bool found = false;
+    for (size_t baubau = 0; baubau < secret.length(); baubau++)
+    {
+        if (secret[baubau] == guessLetter)
+        {
+            hint[baubau] = std::string(1, guessLetter);
+            found = true;
+        }
+    }
+    return found;
 }
 
+void displayHangman(int lives)
+{
+    std::cout << "Lives left: " << lives << "\n";
+}
 
 int main()
 {
-    srand(time(0)); // seeding the random number generator
-
-    // Creating a word bank
+    srand(time(0));
     std::vector<std::string> wordList = {
-        "education",
-        "solution",
-        "mountain",
-        "platinum",
-        "qlphabet",
-        "necklace",
-        "elevator",
-        "diamonds",
-        "fragrant",
-        "velocity",
-        "graduate",
-        "nebraska",
-        "tropical",
-        "evidence",
-        "involved",
-        "shopping",
-        "baseball",
-        "kangaroo",
-        "horrible",
-        "animals"
-    };
+        "education", "solution", "mountain", "platinum",
+        "alphabet", "necklace", "elevator", "diamonds",
+        "fragrant", "velocity", "graduate", "nebraska",
+        "tropical", "evidence", "involved", "shopping",
+        "baseball", "kangaroo", "horrible", "animals"};
     
-    // answer is a random word from the word bank
-    std::string answer = wordList[rand() % length(wordList)];
+    std::string answer = wordList[rand() % wordList.size()];
     char letterGuess;
-    std::string wordGuess = "";
+    std::string wordGuess;
     int lives = 10;
+    std::vector<char> guessedLetters;
 
     std::cout << "Welcome to Hangman!\n";
-    
-    while (true)    // TODO: update this condition to run when the game should be played
+
+    while (lives > 0 && hint != std::vector<std::string>(answer.length(), "_"))
     {
         std::cout << "\nEnter your guess: ";
         std::cin >> letterGuess;
-        
-        // TODO: Write code that displays the hint; you can either manually display or use the
-        // custom display procedure that I wrote for you
-        // TODO: Display hangman person if applicable; or you can display the number of lives left
-        if (getHint(answer, letterGuess) == false)
+
+        if (std::find(guessedLetters.begin(), guessedLetters.end(), letterGuess()) != guessedLetters.end())
         {
-            lives = lives - 1;
-            // TODO: Update hangman person if you are using a hangman person
+            std::cout << "You already guessed that letter. Try again.\n";
+            continue;
+        }
+        guessedLetters.push_back(letterGuess);
+        
+        if (!getHint(answer, letterGuess))
+        {
+            lives--;
+        }
+
+        display(hint);
+        displayHangman(lives);
+
+        if (hint == std::vector<std::string>(answer.begin(), answer.end()))
+        {
+            std::cout << "Congratulations! You guessed the word: " << answer << "\n";
+            return 0;
         }
         
-
-        // TODO: Write code below that asks you whether you want to guess the word
-        // and allow the user to guess the word using the variable wordGuess
-        std::cout << "Would you like to guess the word (y/n)?\n";
-        
+        std::cout << "Would you like to guess the word (y/n)? ";
+        char response;
+        std::cin >> response;
+        if (response == 'y' || response == 'Y')
+        {
+            std::cout << "Enter your word guess: ";
+            std::cin >> wordGuess;
+            if (wordGuess == answer)
+            {
+                std::cout << "Congratulations! You guessed the word: " << answer << "\n";
+                return 0;
+            }
+            else
+            {
+                std::cout << "Wrong guess! You lose a life.\n";
+                lives--;
+            }
+        }
     }
-
-    std::cout << "Some winning or losing message here";
+    
+    std::cout << "Game over! The correct word was: " << answer << "\n";
     return 0;
 }
